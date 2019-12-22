@@ -1,6 +1,7 @@
-import { Client, Emoji, Message, MessageReaction, RichEmbed, User } from 'discord.js';
+import { Emoji, Message, MessageReaction, RichEmbed, User } from 'discord.js';
 import { EventEmitter } from 'events';
 import { PermissionLevel } from '../enums/PermissionLevel';
+import { Bot } from '../bot';
 
 export abstract class Command extends EventEmitter {
 
@@ -12,18 +13,18 @@ export abstract class Command extends EventEmitter {
     /**
      * Client of bot
      */
-    public client: Client;
+    public bot: Bot;
 
     /**
      * Permission level of user
      */
     public userPermission: PermissionLevel;
 
-    public constructor(message: Message, client: Client, userPermission: PermissionLevel) {
+    public constructor(message: Message, bot: Bot) {
         super();
 
         this.message = message;
-        this.client = client;
+        this.bot = bot;
     }
 
     /**
@@ -96,4 +97,19 @@ export abstract class Command extends EventEmitter {
             }
         }
     }
+
+    protected getInput(trim: boolean = true): {[key: string]: string} {
+        let input = this.message.cleanContent.split(' ');
+        let output: {[key: string]: string} = {};
+
+        input.forEach((arg) => {
+            const matchRes = arg.match(/^(.{1,}):(.{1,})$/);
+
+            if (matchRes) {
+                output[matchRes[1]] = matchRes[2].trim();
+            }
+        });
+
+        return output;
+	}
 }

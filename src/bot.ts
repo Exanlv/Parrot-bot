@@ -1,10 +1,6 @@
 import { Client, Message } from 'discord.js';
 import { CommandConfig } from './blueprints/CommandConfig';
-import { commandConfig } from './commands/config';
-import { MissingPermissionCommand } from './commands/MissingPermissionCommand';
-import { RequiresServerCommand } from './commands/RequiresServerCommand';
-import { UnknownCommand } from './commands/UnknownCommand';
-import { getPermissionLevel, hasPermission } from './helper';
+import { CreateParrotCommand } from './commands/CreateParrotCommand';
 
 export class Bot {
 
@@ -13,7 +9,7 @@ export class Bot {
      * @todo configurable per server
      * @todo Tagging bot as prefix
      */
-    public static prefix: string = '--';
+    public prefix: string;
     /**
      * The discord client the bot uses
      */
@@ -24,22 +20,17 @@ export class Bot {
      */
     private token: string;
 
-    /**
-     * Commands of the bot
-     */
-    private commands: CommandConfig[];
-
     public constructor(token: string) {
         this.client = new Client();
         this.token = token;
 
-        this.commands = commandConfig;
-
         this.client.on('ready', () => {
+            this.prefix = `<@!${this.client.user.id}>`
+            this.registerMessageHandler();
+
             console.log('Bot started!');
         });
 
-        this.registerMessageHandler();
     }
 
     /**
@@ -54,7 +45,7 @@ export class Bot {
      */
     private registerMessageHandler(): void {
         this.client.on('message', (message: Message) => {
-            if (message.content.startsWith(Bot.prefix)) {
+            if (message.content.startsWith(this.prefix)) {
                 this.handleCommand(message);
             }
         });
@@ -65,34 +56,7 @@ export class Bot {
      * @param message
      */
     private handleCommand(message: Message): void {
-        const command = message.content.substr(Bot.prefix.length).split(' ');
-
-        /**
-         * Remove empty entries in case someone types 2 spaces
-         */
-        for (let i = command.length - 1; i > -1; i--) {
-            if (command[i] === '') {
-                command.splice(i, 1);
-            }
-        }
-
-        const commandConfig = this.getCommandConfig(command);
-
-        /**
-         * Determine whether the user can use this command
-         */
-        let commandClass;
-        if (commandConfig && commandConfig.command) {
-            if (commandConfig.requiresServer && !message.guild) {
-                commandClass = RequiresServerCommand;
-            } else {
-                commandClass = hasPermission(message.member || message.author, commandConfig.permission) ? commandConfig.command : MissingPermissionCommand;
-            }
-        } else {
-            commandClass = UnknownCommand;
-        }
-
-        const commandInstance = new commandClass(message, this.client, getPermissionLevel(message.member));
+        const commandInstance = new CreateParrotCommand(message, this);
 
         commandInstance.run().catch(async (e: any): Promise<void> => {
             /**
@@ -108,22 +72,5 @@ export class Bot {
                  */
             }
         });
-    }
-
-    /**
-     * Get the command config associated with a command by a user
-     * @param userCommand
-     * @param availableCommands
-     */
-    private getCommandConfig(userCommand: string[], availableCommands?: CommandConfig[]): CommandConfig {
-        availableCommands = availableCommands || this.commands;
-
-        const usedCommand = availableCommands.find((c: CommandConfig) => c.key === userCommand[0]);
-
-        if (usedCommand && usedCommand.subCommands && userCommand.length > 1) {
-            return this.getCommandConfig(userCommand.slice(1), usedCommand.subCommands);
-        }
-
-        return usedCommand;
     }
 }
