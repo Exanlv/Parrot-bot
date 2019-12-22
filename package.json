@@ -1,0 +1,29 @@
+{
+  "name": "ts-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord bot base made in Typescript",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint -c ./tslint.json 'src/**/*.ts' --fix",
+    "start": "ts-node src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Exanlv/ts-discord-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Exanlv/ts-discord-bot/issues"
+  },
+  "homepage": "https://github.com/Exanlv/ts-discord-bot#readme",
+  "dependencies": {
+    "@types/node": "^12.12.5",
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.6.4"
+  }
+}

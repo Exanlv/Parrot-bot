@@ -1,0 +1,24 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+		"quotemark": [true, "single"],
+		"indent": [true, "spaces", 4],
+		"max-line-length": [false],
+		"object-literal-sort-keys": false,
+		"prefer-for-of": false,
+		"no-shadowed-variable": false,
+		"no-console": false,
+		"no-eval": false,
+		"forin": false,
+		"no-var-requires": false,
+        "typedef": [true, "call-signature", "arrow-call-signature", "parameter", "arrow-parameter", "property-declaration", "member-variable-declaration"],
+		"jsdoc-format": false,
+		"no-string-literal": false,
+		"variable-name": false
+	},
+    "rulesDirectory": []
+}
