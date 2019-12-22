@@ -18,8 +18,9 @@ export class CreateParrotCommand extends Command implements IRunnableCommand {
             try {
                 const buffer = (await createParrot(attachment.url, speed)).gif.buffer;
                 this.message.channel.send(undefined, new Attachment(buffer, 'parrot.gif'));
-            } catch {
-                
+            } catch (e) {
+                this.sendMessage('Invalid file');
+                return;
             }
         });
     }
