@@ -25,12 +25,10 @@ export class Bot {
         this.token = token;
 
         this.client.on('ready', () => {
-            this.prefix = `<@!${this.client.user.id}>`
             this.registerMessageHandler();
 
             console.log('Bot started!');
         });
-
     }
 
     /**
@@ -45,7 +43,7 @@ export class Bot {
      */
     private registerMessageHandler(): void {
         this.client.on('message', (message: Message) => {
-            if (message.content.startsWith(this.prefix)) {
+            if (message.isMentioned(this.client.user)) {
                 this.handleCommand(message);
             }
         });
